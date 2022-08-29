@@ -1,7 +1,5 @@
-
-
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js'
-import { getDatabase, ref, set, onValue ,child,push,update} from "https://www.gstatic.com/firebasejs/9.9.3/firebase-database.js";
+import { getDatabase, ref, set, onValue, child, push, update } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-database.js";
 
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -14,53 +12,42 @@ const firebaseConfig = {
     messagingSenderId: "1066677743414",
     appId: "1:1066677743414:web:f6f176b4eee00168700d97",
     measurementId: "G-D166FP41MX"
-    };
+};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 // Initialize Realtime Database and get a reference to the service
 const database = getDatabase(app);
 
+const country_list = ["CHINA", "INDIA", "USA", "INDONESIA"];
+
 //variable reader
-setTimeout(function () {
-    onValue(
-        ref(database, "users/"), (snapshot) => {
-            var p = document.createElement(p);
-            p.innerHTML = snapshot.val().username;
-            document.getElementsByTagName('body')[0].appendChild(p);
-        }
-    )
-}, 3000);
+// setTimeout(function () {
+//     onValue(
+//         ref(database, "users/"), (snapshot) => {
+//             var p = document.createElement(p);
+//             p.innerHTML = snapshot.val().username;
+//             document.getElementsByTagName('body')[0].appendChild(p);
+//         }
+//     )
+// }, 3000);
 
 //variable setter
-set(ref(database, 'CHINA/'),{
-    population: 100000,
-})
+// set(ref(database, 'CHINA/'),{
+//     population: 100000,
+// })
 
-function show_info()
-{
-    var country;
-    country = prompt("Country");
-    country = country + "/"
-        onValue(
-            ref(database,country),(snapshot) => {
-                var h1 = document.createElement(h1);
-                h1.innerHTML += snapshot.val();
-                document.getElementsByTagName('body')[0].appendChild(h1);
-            }
-        )
-}
+
 
 //setTimeout(show_info(),2000);
 
 //variable updater
-const updates = {};
-updates['/CHINA/' + 'para'] = 2;
-update(ref(database),updates);
+// const updates = {};
+// updates['/CHINA/' + 'para'] = 2;
+// update(ref(database),updates);
 
 
-function transaction()
-{
+function transaction() {
     var seller;
     var buyer;
     var resource;
@@ -71,11 +58,33 @@ function transaction()
     amt = prompt("amount");
     buyer += "/";
     seller += "/";
-    
+
 }
 // var initalresources = 10000;
 
-setTimeout(transaction(),2000);
+//setTimeout(transaction(),2000);
+
+var table = document.getElementsByTagName("table")[0];
+var row = table.getElementsByTagName("tr")[1];
+
+function show_info(item, index) {
+
+    item += "/";
+    setTimeout(function() {
+        onValue(
+            ref(database, item), (snapshot) => {
+                var data = row.getElementsByTagName("td")[index];
+                const node = document.createTextNode(snapshot.val().Aze);
+                data.appendChild(node);
+                // var h1 = document.createElement(h1);
+                // h1.innerHTML = snapshot.val().Aze;
+            }
+        )
+    }, 1000);
+}
+
+country_list.forEach(show_info);
+
 
 // var acc_num;
 // var name;
@@ -125,7 +134,7 @@ setTimeout(transaction(),2000);
 
 // function account_information()
 // {
-    
+
 // }
 
 // function transaction()
@@ -186,5 +195,3 @@ setTimeout(transaction(),2000);
 // {
 //     //maybe a timer to do everything !?!?!
 // }
-
-
