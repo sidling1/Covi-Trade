@@ -75,6 +75,10 @@ function show_info(item, index) {
             ref(database, item), (snapshot) => {
                 var data = row.getElementsByTagName("td")[index];
                 const node = document.createTextNode(snapshot.val().Aze);
+                if(data.childNodes[0])
+                {
+                data.removeChild(data.childNodes[0]);
+                }
                 data.appendChild(node);
                 // var h1 = document.createElement(h1);
                 // h1.innerHTML = snapshot.val().Aze;
