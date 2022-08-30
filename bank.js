@@ -48,6 +48,7 @@ const country_list = ["CHINA", "INDIA", "USA", "INDONESIA"];
 var table = document.getElementsByTagName("table")[0];
 var row1 = table.getElementsByTagName("tr")[1];
 var row2 = table.getElementsByTagName("tr")[2];
+var row3 = table.getElementsByTagName("tr")[3];
 function show_info(item, index) {
 
     item += "/";
@@ -75,7 +76,7 @@ function show_info(item, index) {
 }
 
 country_list.forEach(show_info);
-
+var i=1;
 var button = document.getElementById("transaction");
 button.onclick = function transaction() {
     var seller;
@@ -87,16 +88,27 @@ button.onclick = function transaction() {
     resource = prompt("resource");
     console.log(resource);
     amt = parseInt(prompt("amount"));
+    set(ref(database, 'Transaction/' + i), {
+            BUYER: buyer,
+            SELLER: seller,
+            RESOURCE: resource,
+            AMOUNT: amt
+    });
+
+    i+=1;
+
     buyer += "/";
-    console.log(buyer);
+
     seller += "/";
-    console.log(seller);
-    // resource -= "\0";
+
+
+
     buyer += resource;
     seller += resource;
     var buy;
     var sell;
     var updated = false;
+
     setTimeout(function (){
     get(child(ref(database), `${buyer}`)).then((snapshot) => {
         if (snapshot.exists()) {
@@ -137,88 +149,27 @@ button.onclick = function transaction() {
     });
 
 },1000);}
-// var initalresources = 10000;
 
 //setTimeout(transaction(),2000);
 
+var history = document.getElementById("history");
+history.onclick = function transaction_history()
+                {
+                    onValue(
+                        ref(database, 'Transaction/'), (snapshot) => {
+                            var h1 = document.createElement("h1");
+                            console.log(h1);
+                            var node = document.createTextNode(snapshot.val());
+                            h1.appendChild(node);
+                            console.log(h1);
+                        }
+                    )
+                }
 
 
 
 
-// var acc_num;
-// var name;
-// var net_bln;
-// //var resources;
-// //var star;
-// //var population;
-// //var affected;
-// //var cured;
-// //var vaccinated;
-
-// var resources = {
-//     paracetamol : 0 ,
-//     oxygen : 0,
-//     bed : 0
-// };
-
-// var country = {
-//     this_name : " ",
-//     population:0,
-//     affected: 0,
-//     cured:0 ,
-//     vaccinated:0 ,
-//     star:0 
-// };
-
-// var country1 = {
-//     this_name : " ",
-//     population:0,
-//     affected:0 ,
-//     cured:0 ,
-//     vaccinated:0 ,
-//     star:0 
-// };
-
-// function create_account(country)
-// {
-//     country.this_name = prompt("Enter a country name",country.this_name);
-//     country.population = prompt("Enter the population",country.population);
-//     alert("Enter resources available");
-//     resources.paracetamol = prompt("Paracetamol",resources.paracetamol);
-//     country.affected = 0.6*country.population;
-// }
-
-
-
-
-// function account_information()
-// {
-
-// }
-
-// function transaction()
-// {
-//     var seller;
-//     var buyer;
-//     var res;
-//     var quant;  
-//     buyer = prompt("BUYER");
-//     seller = prompt("SELLER");
-//     res = prompt("resources");
-//     quant = prompt("quantity");
-
-//     //money ka bhi dekhna hai
-//     // buyer me add karo
-//     //seller me subtract karo
-//     //transaction history me save karo
-// }
-
-// function resource_info()
-// {
-//     //retrive data and print the data of resources only
-// }
-
-// function transaction_info()
+                // function transaction_info()
 // {
 //     //print the list of transactions done
 // }
