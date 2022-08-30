@@ -19,7 +19,10 @@ const app = initializeApp(firebaseConfig);
 // Initialize Realtime Database and get a reference to the service
 const database = getDatabase(app);
 
+
 const country_list = ["CHINA", "INDIA", "USA", "INDONESIA"];
+var transactionlist = [];
+
 
 //variable reader
 // setTimeout(function () {
@@ -86,23 +89,27 @@ button.onclick = function transaction() {
     buyer = prompt("buyer");
     seller = prompt("seller");
     resource = prompt("resource");
-    console.log(resource);
     amt = parseInt(prompt("amount"));
     var data = {BUYER: buyer,
     SELLER: seller,
     RESOURCE: resource,
     AMOUNT: amt}
-    ref(database,'Transaction/').push().setValue(data);
+
+    const transaction_list = ref(database,'Transaction/');
+    const add_transaction = push(transaction_list);
+    var key_transaction = add_transaction.key;
+    transactionlist.push(key_transaction);
+    set(add_transaction , data);
+    
+    //ref(database,'Transaction/').push().setValue(data);
     // set(ref(database, 'Transaction/' + i), {
     //         BUYER: buyer,
     //         SELLER: seller,
     //         RESOURCE: resource,
     //         AMOUNT: amt
     // });
-    i+=1;
+    //i+=1;
     
-
-    i+=1;
 
     buyer += "/";
 
@@ -158,20 +165,23 @@ button.onclick = function transaction() {
 },1000);}
 
 //setTimeout(transaction(),2000);
-
-var history = document.getElementById("history");
-history.onclick = function transaction_history()
+function transaction_history(item)
                 {
+                    item += "/";
                     onValue(
-                        ref(database, 'Transaction/'), (snapshot) => {
+                        ref(database, 'Transaction/'+ item), (snapshot) => {
                             var h1 = document.createElement("h1");
                             console.log(h1);
                             var node = document.createTextNode(snapshot.val());
+                            console.log(node);
                             h1.appendChild(node);
+                            document.getElementsByTagName("body")[0].appendChild(h1);
                             console.log(h1);
                         }
                     )
                 }
+var history = document.getElementById("history");
+history.onclick = transactionlist.forEach(transaction_history);
 
 
 
