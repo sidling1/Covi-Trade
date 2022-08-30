@@ -88,12 +88,19 @@ button.onclick = function transaction() {
     resource = prompt("resource");
     console.log(resource);
     amt = parseInt(prompt("amount"));
+    while(1)
+    {
+    if(!ref(database,'Transaction/').childExists("i")){
     set(ref(database, 'Transaction/' + i), {
             BUYER: buyer,
             SELLER: seller,
             RESOURCE: resource,
             AMOUNT: amt
     });
+    break;
+    }
+    i+=1;
+    }
 
     i+=1;
 
