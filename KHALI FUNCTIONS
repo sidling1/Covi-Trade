@@ -1,0 +1,56 @@
+
+// function transaction() {
+//     var seller;
+//     var buyer;
+//     var resource;
+//     var amt;
+//     buyer = prompt("buyer");
+//     seller = prompt("seller");
+//     resource = prompt("resource");
+//     console.log(resource);
+//     amt = parseInt(prompt("amount"));
+//     buyer += "/";
+//     console.log(buyer);
+//     seller += "/";
+//     console.log(seller);
+//     // resource -= "\0";
+//     buyer += resource;
+//     seller += resource;
+//     var buy;
+//     var sell;
+//     var counter = 0;
+//     setTimeout(function (){
+//     onValue(
+//             ref(database, buyer), (snapshot) => {
+//                 buy = parseInt(snapshot.val());
+//                 buy += amt;
+//                 const updates = {};
+//                 updates[ '/'+buyer ] = buy;
+//                 update(ref(database),updates).then(() => {
+//                     console.log("Data saved");
+//                 })
+//                 .catch((error) => {
+//                     console.log("data not saved");
+//                 });;
+//                 }
+//             )
+//     onValue(
+//                 ref(database,seller), (snapshot) => {
+//                     sell = parseInt(snapshot.val());
+//                     sell -= amt;
+//                     const updatess = {};
+//                     updatess['/'+ seller ] = sell;
+//                     update(ref(database),updatess).then(() => {
+//                         console.log("Data saved");
+//                     })
+//                     .catch((error) => {
+//                         console.log("data not saved");
+//                     });
+//                     }
+//                     )},1000)
+
+// }
+
+
+
+

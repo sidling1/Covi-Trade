@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js'
-import { getDatabase, ref, set, onValue, child, push, update } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-database.js";
+import { getDatabase, ref, set, onValue, child, push, update,get } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-database.js";
 
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -45,9 +45,39 @@ const country_list = ["CHINA", "INDIA", "USA", "INDONESIA"];
 // const updates = {};
 // updates['/CHINA/' + 'para'] = 2;
 // update(ref(database),updates);
+var table = document.getElementsByTagName("table")[0];
+var row1 = table.getElementsByTagName("tr")[1];
+var row2 = table.getElementsByTagName("tr")[2];
+function show_info(item, index) {
 
+    item += "/";
+    setTimeout(function() {
+        onValue(
+            ref(database, item), (snapshot) => {
+                var data = row1.getElementsByTagName("td")[index];
+                var node = document.createTextNode(snapshot.val().Aze);
+                if(data.childNodes[0])
+                {
+                data.removeChild(data.childNodes[0]);
+                }
+                data.appendChild(node);
+                data = row2.getElementsByTagName("td")[index];
 
-function transaction() {
+                node = document.createTextNode(snapshot.val().Para);
+                if(data.childNodes[0])
+                {
+                data.removeChild(data.childNodes[0]);
+                }
+                data.appendChild(node);
+            }
+        )
+    }, 1000);
+}
+
+country_list.forEach(show_info);
+
+var button = document.getElementById("transaction");
+button.onclick = function transaction() {
     var seller;
     var buyer;
     var resource;
@@ -55,39 +85,64 @@ function transaction() {
     buyer = prompt("buyer");
     seller = prompt("seller");
     resource = prompt("resource");
-    amt = prompt("amount");
+    console.log(resource);
+    amt = parseInt(prompt("amount"));
     buyer += "/";
+    console.log(buyer);
     seller += "/";
+    console.log(seller);
+    // resource -= "\0";
+    buyer += resource;
+    seller += resource;
+    var buy;
+    var sell;
+    var updated = false;
+    setTimeout(function (){
+    get(child(ref(database), `${buyer}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+            buy = parseInt(snapshot.val());
+                        buy += amt;
+                        const updates = {};
+                        updates[ '/'+buyer ] = buy;
+                        update(ref(database),updates).then(() => {
+                            updated = true;
+                        })
+                        .catch((error) => {
+                            updated = false;
+                        });;
+        } else {
+        console.log("No data available");
+        }
+    }).catch((error) => {
+        console.error(error);
+    });
+            updated = false;
+    get(child(ref(database), `${seller}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+            sell = parseInt(snapshot.val());
+                        sell -= amt;
+                        const updatess = {};
+                        updatess[ '/'+seller ] = sell;
+                        update(ref(database),updatess).then(() => {
+                            updated = true;
+                        })
+                        .catch((error) => {
+                            updated = false;
+                        });;
+        } else {
+        console.log("No data available");
+        }
+    }).catch((error) => {
+        console.error(error);
+    });
 
-}
+},1000);}
 // var initalresources = 10000;
 
 //setTimeout(transaction(),2000);
 
-var table = document.getElementsByTagName("table")[0];
-var row = table.getElementsByTagName("tr")[1];
 
-function show_info(item, index) {
 
-    item += "/";
-    setTimeout(function() {
-        onValue(
-            ref(database, item), (snapshot) => {
-                var data = row.getElementsByTagName("td")[index];
-                const node = document.createTextNode(snapshot.val().Aze);
-                if(data.childNodes[0])
-                {
-                data.removeChild(data.childNodes[0]);
-                }
-                data.appendChild(node);
-                // var h1 = document.createElement(h1);
-                // h1.innerHTML = snapshot.val().Aze;
-            }
-        )
-    }, 1000);
-}
-
-country_list.forEach(show_info);
 
 
 // var acc_num;
