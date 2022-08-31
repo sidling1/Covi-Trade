@@ -51,6 +51,51 @@
 
 // }
 
+-----------------------------------------------------------------------------------------------------
+
+// function show_info(item, index) {
+//     item += "/";
+//     setTimeout(function () {
+//         onValue(ref(database, item), (snapshot) => {
+//             var data = row1.getElementsByTagName("td")[index];
+//             var node = document.createTextNode(snapshot.val().Aze);
+//             if (data.childNodes[0]) {
+//                 data.removeChild(data.childNodes[0]);
+//             }
+//             data.appendChild(node);
+//             data = row2.getElementsByTagName("td")[index];
+
+//             node = document.createTextNode(snapshot.val().Para);
+//             if (data.childNodes[0]) {
+//                 data.removeChild(data.childNodes[0]);
+//             }
+//             data.appendChild(node);
+//         });
+//     }, 1000);
+// }
+
+//country_list.forEach(show_info);
 
 
+//variable reader
+// setTimeout(function () {
+//     onValue(
+//         ref(database, "users/"), (snapshot) => {
+//             var p = document.createElement(p);
+//             p.innerHTML = snapshot.val().username;
+//             document.getElementsByTagName('body')[0].appendChild(p);
+//         }
+//     )
+// }, 3000);
 
+//variable setter
+// set(ref(database, 'CHINA/'),{
+//     population: 100000,
+// })
+
+//setTimeout(show_info(),2000);
+
+//variable updater
+// const updates = {};
+// updates['/CHINA/' + 'para'] = 2;
+// update(ref(database),updates);

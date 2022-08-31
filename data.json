@@ -1,0 +1,54 @@
+{
+    "CHINA":{
+        "POPULATION": 100000,
+        "TAXSTAR": 5,
+        "INFECTED":3.2,
+        "I_CHILD":0.8,
+        "I_ADULT":1.76,
+        "I_OLD":0.64,
+        "LEVO":10,
+        "AZE":20,
+        "PCM":30,
+        "COF":40,
+        "VITC":50
+    },
+    "INDIA":{
+        "POPULATION": 100000,
+        "TAXSTAR": 5,
+        "INFECTED":3.2,
+        "I_CHILD":0.8,
+        "I_ADULT":1.76,
+        "I_OLD":0.64,
+        "LEVO":10,
+        "AZE":20,
+        "PCM":30,
+        "COF":40,
+        "VITC":50
+    },
+    "USA":{
+        "POPULATION": 100000,
+        "TAXSTAR": 5,
+        "INFECTED":3.2,
+        "I_CHILD":0.8,
+        "I_ADULT":1.76,
+        "I_OLD":0.64,
+        "LEVO":10,
+        "AZE":20,
+        "PCM":30,
+        "COF":40,
+        "VITC":50
+    },
+    "INDONESIA":{
+        "POPULATION": 100000,
+        "TAXSTAR": 5,
+        "INFECTED":3.2,
+        "I_CHILD":0.8,
+        "I_ADULT":1.76,
+        "I_OLD":0.64,
+        "LEVO":10,
+        "AZE":20,
+        "PCM":30,
+        "COF":40,
+        "VITC":50
+    }
+}
