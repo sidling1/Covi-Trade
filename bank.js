@@ -138,17 +138,20 @@ button.onclick = function transaction() {
     buyer += "/";
     seller += "/";
 
+    var taxstar=buyer + "TAXSTAR";
     var buyer_country_money = buyer + "MONEY";
     var seller_country_money = seller + "MONEY";
-
+get(child(ref(database),`${taxstar}`)).then((snapshot)=>{
+    var tax = parseInt(snapshot.val());   
     get(child(ref(database),`${buyer_country_money}`)).then((snapshot)=>{
         buyer_money = parseInt(snapshot.val());
-        buyer_money -= rate;
+        buyer_money -= rate*(1+tax*0.1);
         mon_buy.innerHTML = buyer_money;
         const upda = {};
         upda["/" + buyer_country_money] = buyer_money;
         update(ref(database),upda); 
     })
+})
 
     get(child(ref(database),`${seller_country_money}`)).then((snapshot)=>{
         seller_money = parseInt(snapshot.val());
