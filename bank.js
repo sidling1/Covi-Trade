@@ -28,9 +28,9 @@ const app = initializeApp(firebaseConfig);
 // Initialize Realtime Database and get a reference to the service
 const database = getDatabase(app);
 
-const country_list = ["CHINA", "INDIA", "USA", "INDONESIA"];
+const country_list = ["CHINA", "INDIA", "USA", "INDONESIA","BRAZIL","RUSSIA","JAPAN","TURKEY","GERMANY","FRANCE","UK","THAILAND","SOUTHAFRICA","SPAIN","UKRAINE","CANADA","POLAND","UAE","AUSTRIA","NETHERLANDS","AUSTRIA","SWITZERLAND","NEWZEALAND"];
 var transactionlist = [];
-const prop_list = ["POPULATION","INFECTED","PCM","AZE","LEVO"];
+const prop_list = ["POPULATION","INFECTED","PCM","AZE","LEVO","MONEY"];
 
 
 var table = document.getElementsByTagName("table")[0];
@@ -65,6 +65,44 @@ function show_info(item,index)
     )
 }
 
+
+// onValue(ref(database,`AUSTRALIA/`),(golgol)=>
+//         {
+//             var top = table.insertRow();
+//             var cell = top.insertCell();
+//             cell.innerHTML = "PROPERTY";
+//             top.id = "property";
+//             for(var property in golgol.val())
+//             {
+//                 cell = top.insertCell();
+//                 cell.innerHTML=property;
+//             }
+//         })
+
+// onValue(ref(database,`/`),(snapshot)=>{
+//     for(var country in snapshot.val())
+//     {
+//         if(country == 'Transaction')continue;
+//         var pat = country + "/";
+//         var row = table.insertRow();
+//         row.id = country;
+//         var head = row.insertCell();
+//         head.innerHTML = country;
+//         head.classList = ["head"];
+//         onValue(ref(database,`${pat}`),(golgol)=>
+//         {
+//             for(var property in golgol.val())
+//             {
+//                 var cell = row.insertCell();
+//                 cell.classList = [property];
+//                 pat = country + "/" + property + "/";
+//                 onValue(ref(database,`${pat}`),(golgolgol)=>{
+//                     cell.innerHTML = golgolgol.val();
+//                 })                
+//             }
+//         })
+//     }
+// })
 prop_list.forEach(show_info);
 
 var i = 1;
@@ -74,11 +112,15 @@ button.onclick = function transaction() {
     var buyer;
     var resource;
     var amt;
+    var rate;
+    var buyer_money;
+    var seller_money;
     buyer = prompt("buyer");
     seller = prompt("seller");
     resource = prompt("resource");
     amt = parseInt(prompt("amount"));
-    var data = { BUYER: buyer, SELLER: seller, RESOURCE: resource, AMOUNT: amt };
+    rate = parseInt(prompt("rates"));
+    var data = { BUYER: buyer, SELLER: seller, RESOURCE: resource, AMOUNT: amt,RATE: rate};
 
     const transaction_list = ref(database, "Transaction/");
     const add_transaction = push(transaction_list);
@@ -87,12 +129,35 @@ button.onclick = function transaction() {
     set(add_transaction, data);
 
     var prop = document.getElementById(resource);
+    var mon = document.getElementById("MONEY");
     var count_buy = prop.getElementsByClassName(buyer)[0];
     var count_seller = prop.getElementsByClassName(seller)[0];
+    var mon_buy =   mon.getElementsByClassName(buyer)[0];
+    var mon_sell = mon.getElementsByClassName(seller)[0];
 
     buyer += "/";
-
     seller += "/";
+
+    var buyer_country_money = buyer + "MONEY";
+    var seller_country_money = seller + "MONEY";
+
+    get(child(ref(database),`${buyer_country_money}`)).then((snapshot)=>{
+        buyer_money = parseInt(snapshot.val());
+        buyer_money -= rate;
+        mon_buy.innerHTML = buyer_money;
+        const upda = {};
+        upda["/" + buyer_country_money] = buyer_money;
+        update(ref(database),upda); 
+    })
+
+    get(child(ref(database),`${seller_country_money}`)).then((snapshot)=>{
+        seller_money = parseInt(snapshot.val());
+        seller_money += rate;
+        mon_sell.innerHTML = seller_money;
+        const upda = {};
+        upda["/" + seller_country_money] = seller_money;
+        update(ref(database),upda); 
+    })
 
     buyer += resource;
     seller += resource;
@@ -146,22 +211,14 @@ button.onclick = function transaction() {
             });
 };
 
-//setTimeout(transaction(),2000);
-function transaction_history(item) {
-    item += "/";
-    onValue(ref(database, "Transaction/" + item), (snapshot) => {
-        var h1 = document.createElement("h1");
-        console.log(h1);
-        var node = document.createTextNode(snapshot.val());
-        console.log(node);
-        h1.appendChild(node);
-        document.getElementsByTagName("body")[0].appendChild(h1);
-        console.log(h1);
-    });
-}
-var history = document.getElementById("history");
-history.onclick = transactionlist.forEach(transaction_history);
+function transaction_history()
+{
 
+}
+
+var history = document.getElementById("history");
+//history.onclick = transactionlist.forEach(transaction_history);
+history.onclick = transaction_history();
 history.onclick = function ()
 {
     var table2 = document.getElementsByTagName("table")[1];
