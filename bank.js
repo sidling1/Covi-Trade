@@ -29,8 +29,9 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
 const country_list = ["CHINA", "INDIA", "USA", "INDONESIA","BRAZIL","RUSSIA","JAPAN","TURKEY","GERMANY","FRANCE","UK","THAILAND","SOUTHAFRICA","SPAIN","UKRAINE","CANADA","POLAND","UAE","AUSTRIA","NETHERLANDS","AUSTRIA","SWITZERLAND","NEWZEALAND"];
+const testcountry_list = ["BRAZIL","CHINA","INDIA","INDONESIA","POLAND","TURKEY"];
 var transactionlist = [];
-const prop_list = ["POPULATION","INFECTED","PCM","AZE","LEVO","MONEY"];
+const prop_list = ["POPULATION","INFECTED","I_CHILD","I_ADULT","I_OLD","TAXSTAR","PCM","COF","VITC","CEF","AZE","LEVO","MONEY","C1","C2","C3","C4","C5","C6"];
 
 
 var table = document.getElementsByTagName("table")[0];
@@ -40,6 +41,7 @@ var row3 = table.getElementsByTagName("tr")[3];
 
 function show_info(item,index)
 {
+
     var row = table.insertRow();
     row.id = item;
     var cell = row.insertCell();
@@ -56,6 +58,7 @@ function show_info(item,index)
             var c = item;
             item += "/" + prop;
             get(child(ref(database), `${item}`)) .then((snapshot)=>{
+                
                 cell = row.insertCell();
                 cell.classList=[c];
                 var node = document.createTextNode(snapshot.val());
@@ -118,8 +121,8 @@ button.onclick = function transaction() {
     buyer = prompt("buyer");
     seller = prompt("seller");
     resource = prompt("resource");
-    amt = parseInt(prompt("amount"));
-    rate = parseInt(prompt("rates"));
+    amt = parseFloat(prompt("amount"));
+    rate = parseFloat(prompt("rates"));
     var data = { BUYER: buyer, SELLER: seller, RESOURCE: resource, AMOUNT: amt,RATE: rate};
 
     const transaction_list = ref(database, "Transaction/");
@@ -144,8 +147,8 @@ button.onclick = function transaction() {
 get(child(ref(database),`${taxstar}`)).then((snapshot)=>{
     var tax = parseInt(snapshot.val());   
     get(child(ref(database),`${buyer_country_money}`)).then((snapshot)=>{
-        buyer_money = parseInt(snapshot.val());
-        buyer_money -= rate*(1+tax*0.1);
+        var buyer_money = parseFloat(snapshot.val());
+        buyer_money -= rate*(1+(6-tax)*0.01);
         mon_buy.innerHTML = buyer_money;
         const upda = {};
         upda["/" + buyer_country_money] = buyer_money;
@@ -154,7 +157,7 @@ get(child(ref(database),`${taxstar}`)).then((snapshot)=>{
 })
 
     get(child(ref(database),`${seller_country_money}`)).then((snapshot)=>{
-        seller_money = parseInt(snapshot.val());
+        var seller_money = parseFloat(snapshot.val());
         seller_money += rate;
         mon_sell.innerHTML = seller_money;
         const upda = {};
@@ -170,7 +173,7 @@ get(child(ref(database),`${taxstar}`)).then((snapshot)=>{
         get(child(ref(database), `${buyer}`))
             .then((snapshot) => {
                 if (snapshot.exists()) {
-                    buy = parseInt(snapshot.val());
+                    buy = parseFloat(snapshot.val());
                     buy += amt;
                     const updates = {};
                     updates["/" + buyer] = buy;
@@ -193,7 +196,7 @@ get(child(ref(database),`${taxstar}`)).then((snapshot)=>{
         get(child(ref(database), `${seller}`))
             .then((snapshot) => {
                 if (snapshot.exists()) {
-                    sell = parseInt(snapshot.val());
+                    sell = parseFloat(snapshot.val());
                     sell -= amt;
                     const updatess = {};
                     updatess["/" + seller] = sell;
