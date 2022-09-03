@@ -29,7 +29,7 @@ const app = initializeApp(firebaseConfig);
 // Initialize Realtime Database and get a reference to the service
 const database = getDatabase(app);
 
-const country_list = ["CHINA", "INDIA", "USA", "INDONESIA","BRAZIL","RUSSIA","JAPAN","TURKEY","GERMANY","FRANCE","UK","THAILAND","SOUTHAFRICA","SPAIN","UKRAINE","CANADA","POLAND","UAE","AUSTRIA","NETHERLANDS","AUSTRIA","SWITZERLAND","NEWZEALAND"];
+const country_list = ["CHINA", "INDIA", "USA", "INDONESIA","BRAZIL","RUSSIA","JAPAN","TURKEY","SOUTHKOREA","FRANCE","UK","SPAIN","POLAND","UAE","AUSTRALIA","NETHERLANDS","SWITZERLAND","ITALY"];
 const testcountry_list = ["BRAZIL","CHINA","INDIA","INDONESIA","POLAND","TURKEY"];
 var transactionlist = [];
 const prop_list = ["POPULATION","INFECTED","I_CHILD","I_ADULT","I_OLD","TAXSTAR","PCM","COF","VITC","CEF","AZE","LEVO","MONEY","C1","C2","C3","C4","C5","C6"];
