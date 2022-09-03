@@ -9,6 +9,10 @@ import {
     update,
     get,
 } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-database.js";
+import{
+    doc,
+    deleteDoc
+}from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -38,6 +42,19 @@ var table = document.getElementsByTagName("table")[0];
 var row1 = table.getElementsByTagName("tr")[1];
 var row2 = table.getElementsByTagName("tr")[2];
 var row3 = table.getElementsByTagName("tr")[3];
+
+function snapshotToArray(snapshot) {
+    var returnArr = [];
+
+    snapshot.forEach(function(childSnapshot) {
+        var item = childSnapshot.val();
+        item.key = childSnapshot.key;
+
+        returnArr.push(item);
+    });
+
+    return returnArr;
+};
 
 function show_info(item,index)
 {
@@ -106,6 +123,7 @@ function show_info(item,index)
 //         })
 //     }
 // })
+
 prop_list.forEach(show_info);
 
 var i = 1;
@@ -147,8 +165,9 @@ button.onclick = function transaction() {
 get(child(ref(database),`${taxstar}`)).then((snapshot)=>{
     var tax = parseInt(snapshot.val());   
     get(child(ref(database),`${buyer_country_money}`)).then((snapshot)=>{
-        var buyer_money = parseFloat(snapshot.val());
+        buyer_money = parseFloat(snapshot.val());
         buyer_money -= rate*(1+(6-tax)*0.01);
+        buyer_money = buyer_money.toFixed(2);
         mon_buy.innerHTML = buyer_money;
         const upda = {};
         upda["/" + buyer_country_money] = buyer_money;
@@ -157,8 +176,9 @@ get(child(ref(database),`${taxstar}`)).then((snapshot)=>{
 })
 
     get(child(ref(database),`${seller_country_money}`)).then((snapshot)=>{
-        var seller_money = parseFloat(snapshot.val());
+        seller_money = parseFloat(snapshot.val());
         seller_money += rate;
+        seller_money = seller_money.toFixed(2);
         mon_sell.innerHTML = seller_money;
         const upda = {};
         upda["/" + seller_country_money] = seller_money;
@@ -175,6 +195,7 @@ get(child(ref(database),`${taxstar}`)).then((snapshot)=>{
                 if (snapshot.exists()) {
                     buy = parseFloat(snapshot.val());
                     buy += amt;
+                    buy = buy.toFixed(2);
                     const updates = {};
                     updates["/" + buyer] = buy;
                     count_buy.innerHTML = buy;
@@ -198,6 +219,7 @@ get(child(ref(database),`${taxstar}`)).then((snapshot)=>{
                 if (snapshot.exists()) {
                     sell = parseFloat(snapshot.val());
                     sell -= amt;
+                    sell = sell.toFixed(2);
                     const updatess = {};
                     updatess["/" + seller] = sell;
                     count_seller.innerHTML = sell;
@@ -217,14 +239,24 @@ get(child(ref(database),`${taxstar}`)).then((snapshot)=>{
             });
 };
 
-function transaction_history()
-{
 
+var reset = document.getElementById("reset");
+reset.onclick = function reset()
+{
+    
+
+    get(child(ref(database),`Transaction/`))
+    .then ((snapshot)=>{
+        var last_transactionarr = snapshotToArray(snapshot);
+        var last_transaction = last_transactionarr.pop();
+        console.log(last_transactionarr);
+        console.log(last_transaction);
+    })
+    
 }
 
 var history = document.getElementById("history");
 //history.onclick = transactionlist.forEach(transaction_history);
-history.onclick = transaction_history();
 history.onclick = function ()
 {
     var table2 = document.getElementsByTagName("table")[1];
@@ -238,7 +270,6 @@ history.onclick = function ()
                 for(var data in snapshot.val())
                 {
                     var cell = row.insertCell();
-                    console.log(data);
                     onValue(ref(database,`Transaction/${key}/${data}`),
                         (snapshot)=>{
                         cell.innerHTML = snapshot.val();
