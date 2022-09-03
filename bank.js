@@ -159,14 +159,14 @@ button.onclick = function transaction() {
     buyer += "/";
     seller += "/";
 
-    var taxstar=buyer + "TAXSTAR";
+    var taxstar=seller + "TAXSTAR";
     var buyer_country_money = buyer + "MONEY";
     var seller_country_money = seller + "MONEY";
 get(child(ref(database),`${taxstar}`)).then((snapshot)=>{
     var tax = parseInt(snapshot.val());   
     get(child(ref(database),`${buyer_country_money}`)).then((snapshot)=>{
         buyer_money = parseFloat(snapshot.val());
-        buyer_money -= rate*(1+(6-tax)*0.01);
+        buyer_money -= rate*(1+(7-tax)*0.01);
         buyer_money = buyer_money.toFixed(2);
         mon_buy.innerHTML = buyer_money;
         const upda = {};
@@ -243,17 +243,75 @@ get(child(ref(database),`${taxstar}`)).then((snapshot)=>{
 var reset = document.getElementById("reset");
 reset.onclick = function reset()
 {
-    
-
     get(child(ref(database),`Transaction/`))
     .then ((snapshot)=>{
         var last_transactionarr = snapshotToArray(snapshot);
         var last_transaction = last_transactionarr.pop();
+
+        var tax;
         console.log(last_transactionarr);
-        console.log(last_transaction);
-    })
+        console.log(last_transaction.AMOUNT);
+
+        get(child(ref(database),`${last_transaction.SELLER}/TAXSTAR`)).then((snapshot)=>{
+            tax = snapshot.val();
+        })
+
+        get(child(ref(database),`${last_transaction.BUYER}`)).then((snapshot)=>
+            {
+            get(child(ref(database),`${last_transaction.BUYER}/${last_transaction.RESOURCE}`))
+            .then((snapshot)=>{
+                var prev = snapshot.val();
+                var res = document.getElementById(last_transaction.RESOURCE);
+                var cont = res.getElementsByClassName(last_transaction.BUYER)[0];
+                prev -= last_transaction.AMOUNT;
+                    const updates = {};
+                    updates[`${last_transaction.BUYER}/${last_transaction.RESOURCE}`] = prev;
+                    update(ref(database),updates);
+                    cont.innerHTML = prev;
+            })
+            get(child(ref(database),`${last_transaction.BUYER}/MONEY`)).then((snapshot)=>{
+                var prev = snapshot.val();
+                var rate = last_transaction.RATE;
+                var res = document.getElementById("MONEY");
+                var cont = res.getElementsByClassName(last_transaction.BUYER)[0];
+                prev += rate*(1+(7-tax)*0.01);
+                const updates ={};
+                updates[`${last_transaction.BUYER}/MONEY`] = prev;
+                update(ref(database),updates);
+                cont.innerHTML = prev;
+            })
+            }
+        )
     
-}
+    
+    get(child(ref(database),`${last_transaction.SELLER}`)).then((snapshot)=>
+            {
+            get(child(ref(database),`${last_transaction.SELLER}/${last_transaction.RESOURCE}`))
+            .then((snapshot)=>{
+                var prev = snapshot.val();
+                var res = document.getElementById(last_transaction.RESOURCE);
+                var cont = res.getElementsByClassName(last_transaction.SELLER)[0];
+                prev += last_transaction.AMOUNT;
+                    const updates = {};
+                    updates[`${last_transaction.SELLER}/${last_transaction.RESOURCE}`] = prev;
+                    update(ref(database),updates);
+                    cont.innerHTML = prev;
+            })
+            get(child(ref(database),`${last_transaction.SELLER}/MONEY`)).then((snapshot)=>{
+                var prev = snapshot.val();
+                var rate = last_transaction.RATE;
+                var res = document.getElementById("MONEY");
+                var cont = res.getElementsByClassName(last_transaction.SELLER);
+                prev += rate;
+                const updates ={};
+                updates[`${last_transaction.SELLER}/MONEY`] = prev;
+                update(ref(database),updates);
+                cont.innerHTML = prev;
+            })
+            }
+        )
+    })
+
 
 var history = document.getElementById("history");
 //history.onclick = transactionlist.forEach(transaction_history);
@@ -280,4 +338,4 @@ history.onclick = function ()
     })
 };
 
-
+}
