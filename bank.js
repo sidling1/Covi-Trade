@@ -307,16 +307,15 @@ reset.onclick = function reset()
             })
             }
         )
-        console.log(last_transaction)
-        console.log(database.ref.child("Transaction"))
-
-        
+        const trans = {AMOUNT: null,BUYER: null,RATE: null,RESOURCE: null,SELLER: null};
+        const updates = {};
+        updates[`Transaction/${last_transaction.key}`] = trans;
+        update(ref(database),updates);
         
     })
 }
 
 var history = document.getElementById("history");
-//history.onclick = transactionlist.forEach(transaction_history);
 history.onclick = function ()
 {
     var table2 = document.getElementsByTagName("table")[1];
