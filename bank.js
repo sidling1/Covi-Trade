@@ -9,10 +9,7 @@ import {
     update,
     get,
 } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-database.js";
-import{
-    doc,
-    deleteDoc
-}from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
+
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -162,7 +159,7 @@ button.onclick = function transaction() {
     var taxstar=seller + "TAXSTAR";
     var buyer_country_money = buyer + "MONEY";
     var seller_country_money = seller + "MONEY";
-get(child(ref(database),`${taxstar}`)).then((snapshot)=>{
+    get(child(ref(database),`${taxstar}`)).then((snapshot)=>{
     var tax = parseInt(snapshot.val());   
     get(child(ref(database),`${buyer_country_money}`)).then((snapshot)=>{
         buyer_money = parseFloat(snapshot.val());
@@ -245,12 +242,12 @@ reset.onclick = function reset()
 {
     get(child(ref(database),`Transaction/`))
     .then ((snapshot)=>{
+        
         var last_transactionarr = snapshotToArray(snapshot);
         var last_transaction = last_transactionarr.pop();
 
         var tax;
-        console.log(last_transactionarr);
-        console.log(last_transaction.AMOUNT);
+        var key = last_transaction.key;
 
         get(child(ref(database),`${last_transaction.SELLER}/TAXSTAR`)).then((snapshot)=>{
             tax = snapshot.val();
@@ -260,21 +257,21 @@ reset.onclick = function reset()
             {
             get(child(ref(database),`${last_transaction.BUYER}/${last_transaction.RESOURCE}`))
             .then((snapshot)=>{
-                var prev = snapshot.val();
+                var prev = parseFloat(snapshot.val());
                 var res = document.getElementById(last_transaction.RESOURCE);
                 var cont = res.getElementsByClassName(last_transaction.BUYER)[0];
-                prev -= last_transaction.AMOUNT;
+                prev -= parseFloat(last_transaction.AMOUNT);
                     const updates = {};
                     updates[`${last_transaction.BUYER}/${last_transaction.RESOURCE}`] = prev;
                     update(ref(database),updates);
                     cont.innerHTML = prev;
             })
             get(child(ref(database),`${last_transaction.BUYER}/MONEY`)).then((snapshot)=>{
-                var prev = snapshot.val();
+                var prev = parseFloat(snapshot.val());
                 var rate = last_transaction.RATE;
                 var res = document.getElementById("MONEY");
                 var cont = res.getElementsByClassName(last_transaction.BUYER)[0];
-                prev += rate*(1+(7-tax)*0.01);
+                prev += parseFloat(rate*(1+(7-tax)*0.01));
                 const updates ={};
                 updates[`${last_transaction.BUYER}/MONEY`] = prev;
                 update(ref(database),updates);
@@ -288,21 +285,21 @@ reset.onclick = function reset()
             {
             get(child(ref(database),`${last_transaction.SELLER}/${last_transaction.RESOURCE}`))
             .then((snapshot)=>{
-                var prev = snapshot.val();
+                var prev = parseFloat(snapshot.val());
                 var res = document.getElementById(last_transaction.RESOURCE);
                 var cont = res.getElementsByClassName(last_transaction.SELLER)[0];
-                prev += last_transaction.AMOUNT;
+                prev += parseFloat(last_transaction.AMOUNT);
                     const updates = {};
                     updates[`${last_transaction.SELLER}/${last_transaction.RESOURCE}`] = prev;
                     update(ref(database),updates);
                     cont.innerHTML = prev;
             })
             get(child(ref(database),`${last_transaction.SELLER}/MONEY`)).then((snapshot)=>{
-                var prev = snapshot.val();
-                var rate = last_transaction.RATE;
+                var prev = parseFloat(snapshot.val());
+                var rate = parseFloat(last_transaction.RATE);
                 var res = document.getElementById("MONEY");
-                var cont = res.getElementsByClassName(last_transaction.SELLER);
-                prev += rate;
+                var cont = res.getElementsByClassName(last_transaction.SELLER)[0];
+                prev -= parseFloat(rate);
                 const updates ={};
                 updates[`${last_transaction.SELLER}/MONEY`] = prev;
                 update(ref(database),updates);
@@ -310,8 +307,13 @@ reset.onclick = function reset()
             })
             }
         )
-    })
+        console.log(last_transaction)
+        console.log(database.ref.child("Transaction"))
 
+        
+        
+    })
+}
 
 var history = document.getElementById("history");
 //history.onclick = transactionlist.forEach(transaction_history);
@@ -338,4 +340,4 @@ history.onclick = function ()
     })
 };
 
-}
+
